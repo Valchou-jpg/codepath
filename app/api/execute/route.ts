@@ -67,11 +67,13 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const finalCode = language === 'sql' ? SQL_PREAMBLE + code : code;
+  let finalCode = language === 'sql' ? SQL_PREAMBLE + code : code;
+  if (language === 'java') {
+    finalCode = finalCode.replace(/public\s+class\s+\w+/g, 'public class prog');
+  }
 
   try {
     const body: Record<string, string> = { code: finalCode, compiler };
-    if (FILENAMES[language]) body.filename = FILENAMES[language];
 
     const res = await fetch(WANDBOX_URL, {
       method: 'POST',
