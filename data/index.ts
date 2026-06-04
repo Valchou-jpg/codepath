@@ -147,6 +147,116 @@ int main() {
         },
       ],
     },
+    {
+      id: 'c-advanced',
+      title: 'Tableaux et récursivité',
+      description: 'Statistiques sur tableaux, fonctions récursives',
+      lessons: [
+        {
+          id: 'c-arrays-stats',
+          title: 'Statistiques sur un tableau',
+          description: 'Calcule somme, minimum, maximum et moyenne d\'un tableau d\'entiers.',
+          content: `## Tableaux en C
+
+\`\`\`c
+int arr[] = {5, 2, 8, 1, 9};
+int n = 5;
+
+// Parcours
+for (int i = 0; i < n; i++) {
+    printf("%d ", arr[i]);
+}
+
+// Taille d'un tableau déclaré localement
+int taille = sizeof(arr) / sizeof(arr[0]); // 5
+\`\`\`
+
+**Fonctions utiles :**
+\`\`\`c
+int min = arr[0];
+for (int i = 1; i < n; i++)
+    if (arr[i] < min) min = arr[i];
+\`\`\``,
+          code: `#include <stdio.h>
+
+int main() {
+    int arr[] = {5, 2, 8, 1, 9, 3, 7, 4, 6};
+    int n = 9;
+    int sum = 0, min = arr[0], max = arr[0];
+
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+        if (arr[i] < min) min = arr[i];
+        if (arr[i] > max) max = arr[i];
+    }
+
+    printf("Somme : %d\\n", sum);
+    printf("Min : %d, Max : %d\\n", min, max);
+    printf("Moyenne : %.2f\\n", (float)sum / n);
+
+    return 0;
+}`,
+          expectedOutput: `Somme : 45\nMin : 1, Max : 9\nMoyenne : 5.00`,
+          hint: 'Parcoure le tableau pour calculer la somme, puis cherche le min et max dans la même boucle.',
+          xp: 25,
+          difficulty: 'beginner',
+          type: 'lesson',
+        },
+        {
+          id: 'c-recursion',
+          title: 'Fonctions récursives',
+          description: 'Implémente factorielle et Fibonacci en récursif.',
+          content: `## Récursivité en C
+
+Une fonction récursive s'appelle elle-même avec un cas de base pour arrêter.
+
+\`\`\`c
+int factorielle(int n) {
+    if (n <= 1) return 1;           // cas de base
+    return n * factorielle(n - 1); // appel récursif
+}
+// factorielle(5) = 5 * 4 * 3 * 2 * 1 = 120
+\`\`\`
+
+**Fibonacci :**
+\`\`\`c
+int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n-1) + fibonacci(n-2);
+}
+// 0 1 1 2 3 5 8 13 21...
+\`\`\``,
+          code: `#include <stdio.h>
+
+int factorielle(int n) {
+    if (n <= 1) return 1;
+    return n * factorielle(n - 1);
+}
+
+int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main() {
+    for (int i = 0; i <= 7; i++) {
+        printf("fact(%d) = %d\\n", i, factorielle(i));
+    }
+    printf("\\nFibonacci : ");
+    for (int i = 0; i < 8; i++) {
+        printf("%d ", fibonacci(i));
+    }
+    printf("\\n");
+    return 0;
+}`,
+          expectedOutput: `fact(0) = 1\nfact(1) = 1\nfact(2) = 2\nfact(3) = 6\nfact(4) = 24\nfact(5) = 120\nfact(6) = 720\nfact(7) = 5040\n\nFibonacci : 0 1 1 2 3 5 8 13 `,
+          hint: 'Écris deux fonctions récursives : factorielle(n) et fibonacci(n) avec leurs cas de base.',
+          xp: 30,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+      ],
+    },
   ],
   courseContent: [
     {
@@ -358,6 +468,134 @@ public class Main {
         },
       ],
     },
+    {
+      id: 'java-collections',
+      title: 'Collections et interfaces',
+      description: 'ArrayList, HashMap et interfaces en Java',
+      lessons: [
+        {
+          id: 'java-collections-basic',
+          title: 'ArrayList et HashMap',
+          description: 'Utilise les collections Java pour stocker et manipuler des données.',
+          content: `## Collections Java
+
+**ArrayList — liste dynamique :**
+\`\`\`java
+import java.util.*;
+
+ArrayList<String> liste = new ArrayList<>();
+liste.add("Python");
+liste.add("Java");
+Collections.sort(liste);
+System.out.println(liste);
+\`\`\`
+
+**HashMap — paires clé/valeur :**
+\`\`\`java
+HashMap<String, Integer> scores = new HashMap<>();
+scores.put("Alice", 95);
+scores.put("Bob", 72);
+System.out.println(scores.get("Alice")); // 95
+for (Map.Entry<String, Integer> e : scores.entrySet()) {
+    System.out.println(e.getKey() + ": " + e.getValue());
+}
+\`\`\``,
+          code: `import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<String> langages = new ArrayList<>();
+        langages.add("Python");
+        langages.add("Java");
+        langages.add("JavaScript");
+        langages.add("C");
+        Collections.sort(langages);
+        System.out.println("Langages : " + langages);
+
+        HashMap<String, Integer> scores = new HashMap<>();
+        scores.put("Alice", 95);
+        scores.put("Bob", 72);
+        scores.put("Charlie", 88);
+
+        String meilleur = Collections.max(scores.entrySet(),
+            Map.Entry.comparingByValue()).getKey();
+        System.out.println("Meilleur : " + meilleur + " (" + scores.get(meilleur) + "/100)");
+
+        for (Map.Entry<String, Integer> e : new TreeMap<>(scores).entrySet()) {
+            System.out.printf("%s : %d/100%n", e.getKey(), e.getValue());
+        }
+    }
+}`,
+          expectedOutput: `Langages : [C, Java, JavaScript, Python]\nMeilleur : Alice (95/100)\nAlice : 95/100\nBob : 72/100\nCharlie : 88/100`,
+          hint: 'Crée une ArrayList de langages triée et une HashMap de scores, puis trouve le meilleur score.',
+          xp: 30,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'java-interfaces',
+          title: 'Interfaces Java',
+          description: 'Crée et implémente une interface avec plusieurs classes.',
+          content: `## Interfaces en Java
+
+Une interface définit un contrat que les classes doivent respecter.
+
+\`\`\`java
+interface Animal {
+    String cri();
+    default String description() {
+        return "Je suis un animal qui crie : " + cri();
+    }
+}
+
+class Chien implements Animal {
+    public String cri() { return "Woof !"; }
+}
+
+class Chat implements Animal {
+    public String cri() { return "Miaou !"; }
+}
+\`\`\``,
+          code: `interface Forme {
+    double aire();
+    double perimetre();
+    default String description() {
+        return String.format("Aire=%.2f, Périmètre=%.2f", aire(), perimetre());
+    }
+}
+
+class Cercle implements Forme {
+    private double r;
+    Cercle(double r) { this.r = r; }
+    public double aire() { return Math.PI * r * r; }
+    public double perimetre() { return 2 * Math.PI * r; }
+    public String toString() { return "Cercle(r=" + r + ")"; }
+}
+
+class Rectangle implements Forme {
+    private double l, h;
+    Rectangle(double l, double h) { this.l = l; this.h = h; }
+    public double aire() { return l * h; }
+    public double perimetre() { return 2 * (l + h); }
+    public String toString() { return "Rectangle(" + l + "x" + h + ")"; }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Forme[] formes = { new Cercle(5), new Rectangle(4, 6) };
+        for (Forme f : formes) {
+            System.out.println(f + " → " + f.description());
+        }
+    }
+}`,
+          expectedOutput: `Cercle(r=5.0) → Aire=78.54, Périmètre=31.42\nRectangle(4.0x6.0) → Aire=24.00, Périmètre=20.00`,
+          hint: 'Crée une interface Forme avec aire() et perimetre(), puis implémente Cercle et Rectangle.',
+          xp: 35,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+      ],
+    },
   ],
   courseContent: [
     {
@@ -516,6 +754,46 @@ LIMIT 5;`,
           difficulty: 'intermediate',
           type: 'lesson',
         },
+        {
+          id: 'sql-aggregation',
+          title: 'GROUP BY et agrégations',
+          description: 'Regroupe les données par département et calcule des statistiques.',
+          content: `## GROUP BY et fonctions d'agrégation
+
+\`\`\`sql
+SELECT departement,
+    COUNT(*) AS nb,
+    AVG(salaire) AS moy,
+    MAX(salaire) AS max
+FROM employes
+GROUP BY departement
+HAVING COUNT(*) > 1  -- filtre après regroupement
+ORDER BY moy DESC;
+\`\`\`
+
+**Fonctions d'agrégation :**
+| Fonction | Résultat |
+|----------|---------|
+| COUNT(*) | Nombre de lignes |
+| SUM(col) | Somme |
+| AVG(col) | Moyenne |
+| MAX/MIN  | Maximum/Minimum |`,
+          code: `-- Statistiques par département
+SELECT
+    departement,
+    COUNT(*) AS nb_employes,
+    ROUND(AVG(salaire), 0) AS salaire_moyen,
+    MAX(salaire) AS salaire_max,
+    MIN(annee_embauche) AS premiere_embauche
+FROM employes
+GROUP BY departement
+ORDER BY salaire_moyen DESC;`,
+          expectedOutput: `Informatique|3|5233.0|6000.0|2017\nRH|2|3950.0|4100.0|2020\nMarketing|2|3350.0|3500.0|2021`,
+          hint: 'Utilise GROUP BY departement avec COUNT, AVG arrondi, MAX et MIN.',
+          xp: 25,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
       ],
     },
   ],
@@ -641,6 +919,124 @@ console.log(premier(["a", "b", "c"])); // string`,
         },
       ],
     },
+    {
+      id: 'ts-advanced',
+      title: 'Génériques et utilitaires',
+      description: 'Fonctions génériques et types utilitaires TypeScript',
+      lessons: [
+        {
+          id: 'ts-generics',
+          title: 'Fonctions génériques',
+          description: 'Écris des fonctions qui fonctionnent avec n\'importe quel type.',
+          content: `## Génériques TypeScript
+
+\`\`\`typescript
+// Sans générique → perd le type
+function premier(arr: any[]): any { return arr[0]; }
+
+// Avec générique → type préservé
+function premier<T>(arr: T[]): T | undefined { return arr[0]; }
+
+const n = premier([1, 2, 3]);     // number
+const s = premier(["a", "b"]);    // string
+\`\`\`
+
+**Contraintes :**
+\`\`\`typescript
+function plus_long<T extends { length: number }>(a: T, b: T): T {
+    return a.length >= b.length ? a : b;
+}
+console.log(plus_long("chat", "chien")); // "chien"
+console.log(plus_long([1,2], [1,2,3])); // [1,2,3]
+\`\`\``,
+          code: `function filtrer<T>(arr: T[], pred: (x: T) => boolean): T[] {
+    return arr.filter(pred);
+}
+
+function transformer<T, U>(arr: T[], fn: (x: T) => U): U[] {
+    return arr.map(fn);
+}
+
+function grouper<T>(arr: T[], cle: (x: T) => string): Record<string, T[]> {
+    return arr.reduce((acc, item) => {
+        const k = cle(item);
+        acc[k] = [...(acc[k] || []), item];
+        return acc;
+    }, {} as Record<string, T[]>);
+}
+
+const nombres = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const pairs = filtrer(nombres, n => n % 2 === 0);
+const carrés = transformer(pairs, n => n * n);
+console.log("Pairs :", pairs);
+console.log("Carrés des pairs :", carrés);
+
+interface Produit { nom: string; categorie: string; prix: number; }
+const produits: Produit[] = [
+    { nom: "Laptop", categorie: "Informatique", prix: 999 },
+    { nom: "Souris", categorie: "Informatique", prix: 29 },
+    { nom: "Stylo", categorie: "Bureau", prix: 3 },
+];
+const parCategorie = grouper(produits, p => p.categorie);
+console.log("Catégories :", Object.keys(parCategorie));`,
+          expectedOutput: `Pairs : [ 2, 4, 6, 8, 10 ]\nCarrés des pairs : [ 4, 16, 36, 64, 100 ]\nCatégories : [ 'Informatique', 'Bureau' ]`,
+          hint: 'Crée 3 fonctions génériques : filtrer<T>, transformer<T,U> et grouper<T>.',
+          xp: 35,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'ts-utility-types',
+          title: 'Types utilitaires',
+          description: 'Utilise Partial, Required, Pick, Omit et Record.',
+          content: `## Types utilitaires TypeScript
+
+\`\`\`typescript
+interface User { id: number; nom: string; email: string; age: number; }
+
+Partial<User>     // tous les champs optionnels
+Required<User>    // tous les champs requis
+Pick<User, 'id' | 'nom'>   // garde seulement id et nom
+Omit<User, 'age'>          // retire age
+Record<string, number>     // objet clé→valeur
+
+// Exemple
+function mettreAJour(user: User, maj: Partial<User>): User {
+    return { ...user, ...maj };
+}
+\`\`\``,
+          code: `interface Employe {
+    id: number;
+    nom: string;
+    email: string;
+    salaire: number;
+    departement: string;
+}
+
+type EmployePublic = Omit<Employe, 'salaire'>;
+type EmployeResume = Pick<Employe, 'nom' | 'departement'>;
+type MiseAJour = Partial<Omit<Employe, 'id'>>;
+
+function mettreAJour(emp: Employe, maj: MiseAJour): Employe {
+    return { ...emp, ...maj };
+}
+
+const alice: Employe = { id: 1, nom: "Alice", email: "alice@ex.com", salaire: 4500, departement: "IT" };
+const alicePublic: EmployePublic = { id: alice.id, nom: alice.nom, email: alice.email, departement: alice.departement };
+const aliceResume: EmployeResume = { nom: alice.nom, departement: alice.departement };
+
+console.log("Public :", alicePublic);
+console.log("Résumé :", aliceResume);
+
+const aliceMaj = mettreAJour(alice, { salaire: 5000, departement: "Lead" });
+console.log("Après MAJ :", aliceMaj.nom, "—", aliceMaj.salaire, "€,", aliceMaj.departement);`,
+          hint: 'Crée les types EmployePublic (Omit salaire), EmployeResume (Pick nom+departement) et MiseAJour (Partial sans id).',
+          xp: 40,
+          difficulty: 'advanced',
+          type: 'lesson',
+        },
+      ],
+    },
   ],
   courseContent: [
     {
@@ -751,6 +1147,126 @@ fn main() {
           hint: 'Utilise les références, lifetimes et Option<T> en Rust.',
           xp: 40,
           difficulty: 'advanced',
+          type: 'lesson',
+        },
+      ],
+    },
+    {
+      id: 'rust-practical',
+      title: 'Enums, Vec et itérateurs',
+      description: 'Enums avec match, Vec et méthodes fonctionnelles',
+      lessons: [
+        {
+          id: 'rust-enums',
+          title: 'Enums et pattern matching',
+          description: 'Utilise les enums Rust avec match pour gérer différents cas.',
+          content: `## Enums en Rust
+
+\`\`\`rust
+#[derive(Debug)]
+enum Direction { Nord, Sud, Est, Ouest }
+
+fn avancer(d: &Direction) -> &str {
+    match d {
+        Direction::Nord => "↑",
+        Direction::Sud => "↓",
+        Direction::Est => "→",
+        Direction::Ouest => "←",
+    }
+}
+\`\`\`
+
+**Option<T> — valeur optionnelle :**
+\`\`\`rust
+fn diviser(a: f64, b: f64) -> Option<f64> {
+    if b == 0.0 { None } else { Some(a / b) }
+}
+match diviser(10.0, 2.0) {
+    Some(r) => println!("Résultat : {}", r),
+    None    => println!("Division par zéro !"),
+}
+\`\`\``,
+          code: `#[derive(Debug)]
+enum Saison { Printemps, Ete, Automne, Hiver }
+
+fn temperature(s: &Saison) -> f32 {
+    match s {
+        Saison::Printemps => 15.0,
+        Saison::Ete => 28.0,
+        Saison::Automne => 12.0,
+        Saison::Hiver => 3.0,
+    }
+}
+
+fn diviser(a: f64, b: f64) -> Option<f64> {
+    if b == 0.0 { None } else { Some(a / b) }
+}
+
+fn main() {
+    let saisons = [Saison::Printemps, Saison::Ete, Saison::Automne, Saison::Hiver];
+    for s in &saisons {
+        println!("{:?} : {:.1}°C", s, temperature(s));
+    }
+
+    for (a, b) in [(10.0, 2.0), (7.0, 0.0)] {
+        match diviser(a, b) {
+            Some(r) => println!("{} / {} = {}", a, b, r),
+            None => println!("{} / {} = erreur !", a, b),
+        }
+    }
+}`,
+          expectedOutput: `Printemps : 15.0°C\nEte : 28.0°C\nAutomne : 12.0°C\nHiver : 3.0°C\n10 / 2 = 5\n7 / 0 = erreur !`,
+          hint: 'Crée un enum Saison, une fonction temperature() avec match, et une fonction diviser() qui retourne Option<f64>.',
+          xp: 35,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'rust-iterators',
+          title: 'Vec et itérateurs',
+          description: 'Manipule des vecteurs avec les méthodes fonctionnelles de Rust.',
+          content: `## Itérateurs Rust
+
+\`\`\`rust
+let v: Vec<i32> = (1..=5).collect();
+// [1, 2, 3, 4, 5]
+
+// filter — garde si condition
+let pairs: Vec<i32> = v.iter()
+    .filter(|&&x| x % 2 == 0)
+    .cloned().collect();
+
+// map — transforme
+let carrés: Vec<i32> = v.iter()
+    .map(|&x| x * x)
+    .collect();
+
+// fold — accumule
+let somme: i32 = v.iter().sum();
+\`\`\``,
+          code: `fn main() {
+    let nombres: Vec<i32> = (1..=10).collect();
+
+    let pairs: Vec<i32> = nombres.iter()
+        .filter(|&&x| x % 2 == 0)
+        .cloned().collect();
+
+    let carrés: Vec<i32> = nombres.iter()
+        .map(|&x| x * x)
+        .collect();
+
+    let somme: i32 = nombres.iter().sum();
+    let max = nombres.iter().max().unwrap();
+
+    println!("Nombres : {:?}", nombres);
+    println!("Pairs : {:?}", pairs);
+    println!("Carrés : {:?}", carrés);
+    println!("Somme : {}, Max : {}", somme, max);
+}`,
+          expectedOutput: `Nombres : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nPairs : [2, 4, 6, 8, 10]\nCarrés : [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\nSomme : 55, Max : 10`,
+          hint: 'Utilise .filter(), .map() et .sum() sur un vecteur d\'entiers 1 à 10.',
+          xp: 30,
+          difficulty: 'intermediate',
           type: 'lesson',
         },
       ],

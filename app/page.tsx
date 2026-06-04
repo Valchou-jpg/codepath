@@ -127,6 +127,62 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Interface demo */}
+      <section className="py-24 px-6 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold text-white text-center mb-4">Comment ça marche ?</h2>
+          <p className="text-white/40 text-center mb-12">Trois étapes pour maîtriser un langage.</p>
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {[
+              { num: '①', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20', title: 'Cours', desc: 'Lis la théorie avec des exemples clairs et détaillés.' },
+              { num: '②', color: 'text-purple-400 bg-purple-500/10 border-purple-500/20', title: 'Démo', desc: 'Vois le code s\'exécuter en direct avec le résultat affiché.' },
+              { num: '③', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20', title: 'Exercice', desc: 'Écris ton propre code dans l\'éditeur et exécute-le.' },
+            ].map((step, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true }}
+                className={`glass border rounded-2xl p-6 ${step.color}`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold mb-4 border ${step.color}`}>{step.num}</div>
+                <h3 className="text-white font-semibold mb-2 text-lg">{step.title}</h3>
+                <p className="text-white/50 text-sm leading-relaxed">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Mini preview de l'interface */}
+          <div className="glass rounded-2xl overflow-hidden border border-white/5">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/2">
+              <div className="w-3 h-3 rounded-full bg-red-500/60" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
+              <div className="w-3 h-3 rounded-full bg-green-500/60" />
+              <span className="text-xs text-white/30 ml-2">CodePath — Python</span>
+            </div>
+            <div className="flex divide-x divide-white/5 min-h-[220px]">
+              <div className="flex-1 p-5 text-sm">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-5 h-5 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 text-xs font-bold">③</span>
+                  <span className="text-white/70 font-medium">À toi de jouer !</span>
+                </div>
+                <div className="bg-orange-500/8 border border-orange-500/30 rounded-lg p-3 mb-3">
+                  <p className="text-xs text-orange-400 font-semibold mb-1">📋 Consigne</p>
+                  <p className="text-xs text-white/80">Crée une fonction est_premier(n) et liste tous les premiers {'<'} 50.</p>
+                </div>
+                <div className="bg-white/3 border border-white/5 rounded-lg px-3 py-2">
+                  <p className="text-xs text-white/40">Débutant · 25 XP</p>
+                </div>
+              </div>
+              <div className="flex-1 bg-[#0d1117] p-5 font-mono text-xs text-white/70">
+                <div className="text-white/30 mb-2 text-[11px]">python</div>
+                <div className="text-blue-400">def <span className="text-yellow-300">est_premier</span><span className="text-white">(n):</span></div>
+                <div className="pl-4 text-white/60">    <span className="text-blue-400">if</span> n {'<'} 2: <span className="text-blue-400">return</span> <span className="text-orange-400">False</span></div>
+                <div className="pl-4">    <span className="text-blue-400">for</span> i <span className="text-blue-400">in</span> <span className="text-yellow-300">range</span>(2, n):</div>
+                <div className="pl-8">        <span className="text-blue-400">if</span> n % i == 0: <span className="text-blue-400">return</span> <span className="text-orange-400">False</span></div>
+                <div className="pl-4">    <span className="text-blue-400">return</span> <span className="text-orange-400">True</span></div>
+                <div className="mt-2 text-green-400 text-[11px]">▶ [2, 3, 5, 7, 11, 13, 17, 19, 23, 29...]</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-24 px-6 text-center border-t border-white/5">
         <h2 className="text-4xl font-bold text-white mb-4">Prêt à coder ?</h2>
@@ -139,7 +195,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-white/5 py-8 px-6 text-center text-white/30 text-sm">
-        © 2024 CodePath — Apprends à coder
+        © 2025 CodePath — Apprends à coder
       </footer>
     </div>
   );
