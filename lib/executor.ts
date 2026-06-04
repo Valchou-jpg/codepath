@@ -45,6 +45,15 @@ export async function executePython(code: string): Promise<ExecResult> {
   }
 }
 
+async function executeOnServer(language: string, code: string): Promise<ExecResult> {
+  const res = await fetch('/api/execute', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ language, code }),
+  });
+  return res.json();
+}
+
 export async function executeCode(language: string, code: string): Promise<ExecResult> {
   switch (language) {
     case 'javascript':
@@ -52,9 +61,14 @@ export async function executeCode(language: string, code: string): Promise<ExecR
       return executeJavaScript(code);
     case 'python':
       return executePython(code);
+    case 'c':
+    case 'java':
+    case 'rust':
+    case 'sql':
+      return executeOnServer(language, code);
     default:
       return {
-        output: `✓ Code syntaxiquement valide !\n\nLes langages ${language.toUpperCase()} nécessitent un compilateur/runtime côté serveur.`,
+        output: `✓ Code syntaxiquement valide !\n\nCe langage n'est pas encore supporté.`,
         error: false,
       };
   }
