@@ -289,17 +289,26 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
           <div className="px-5 py-5">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 text-xs font-bold">③</div>
-              <span className="text-sm font-semibold text-white flex items-center gap-1.5"><Pencil size={13} /> Exercice</span>
-            </div>
-            <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-4 mb-4">
-              <p className="text-sm text-white/80 leading-relaxed">{lesson.description}</p>
+              <span className="text-sm font-semibold text-white flex items-center gap-1.5"><Pencil size={13} /> À toi de jouer !</span>
             </div>
 
-            {/* Hint */}
+            {/* Consigne principale — toujours visible */}
+            <div className="bg-orange-500/8 border border-orange-500/30 rounded-xl p-4 mb-4">
+              <p className="text-xs font-semibold text-orange-400 uppercase tracking-widest mb-2">📋 Consigne</p>
+              <p className="text-sm text-white/90 leading-relaxed font-medium">{lesson.hint}</p>
+            </div>
+
+            {/* Contexte / Description */}
+            <div className="bg-white/3 border border-white/5 rounded-xl px-4 py-3 mb-4">
+              <p className="text-xs text-white/40 mb-1">Contexte</p>
+              <p className="text-xs text-white/60 leading-relaxed">{lesson.description}</p>
+            </div>
+
+            {/* Indice supplémentaire — opt-in */}
             <div className="rounded-xl overflow-hidden border border-yellow-500/20 mb-3">
               <button onClick={() => setShowHint(!showHint)}
                 className="w-full flex items-center gap-2 px-4 py-3 bg-yellow-500/10 text-yellow-400 text-sm font-medium">
-                <Lightbulb size={14} /> Indice
+                <Lightbulb size={14} /> Besoin d'aide ?
                 {showHint ? <ChevronUp size={13} className="ml-auto" /> : <ChevronDown size={13} className="ml-auto" />}
               </button>
               {showHint && (
@@ -308,12 +317,12 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
               )}
             </div>
 
-            {/* Expected output — opt-in */}
+            {/* Résultat attendu — opt-in */}
             {lesson.expectedOutput && (
               <div className="rounded-xl overflow-hidden border border-purple-500/20">
                 <button onClick={() => setShowExpected(!showExpected)}
                   className="w-full flex items-center gap-2 px-4 py-3 bg-purple-500/10 text-purple-400 text-sm font-medium">
-                  <Target size={14} /> Résultat attendu
+                  <Target size={14} /> Voir le résultat attendu
                   {showExpected ? <ChevronUp size={13} className="ml-auto" /> : <ChevronDown size={13} className="ml-auto" />}
                 </button>
                 {showExpected && (
