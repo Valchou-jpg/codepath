@@ -70,6 +70,7 @@ int main() {
     
     return 0;
 }`,
+          expectedOutput: `Age : 20 ans\nPi = 3.1416\nGrade : A\nPi * age = 62.83`,
           hint: 'Affiche des variables de types int, float et char avec printf.',
           xp: 10,
           difficulty: 'beginner',
@@ -138,6 +139,7 @@ int main() {
     
     return 0;
 }`,
+          expectedOutput: `Avant : x=10, y=20\nAprès : x=20, y=10\nMaximum : 9 (adresse: varie selon l'exécution)`,
           hint: 'Implémente une fonction échanger() utilisant des pointeurs, et trouve le max d\'un tableau.',
           xp: 35,
           difficulty: 'intermediate',
@@ -248,6 +250,7 @@ boolean actif = true;
         System.out.println(nom.contains("ent"));
     }
 }`,
+          expectedOutput: `Nom : Valentin\nAge : 20 ans\nTaille : 1.75 m\nInitiale : V\nÉtudiant : true\nVALENTIN\n8\ntrue`,
           hint: 'Déclare et affiche des variables de différents types avec printf.',
           xp: 10,
           difficulty: 'beginner',
@@ -347,6 +350,7 @@ public class Main {
         }
     }
 }`,
+          expectedOutput: `Toyota | 180 km/h | Essence/Diesel\nTesla | 250 km/h | Électrique (500km)\nRenault | 150 km/h | Électrique (300km)`,
           hint: 'Crée une hiérarchie Vehicule → Voiture et VoitureElectrique avec polymorphisme.',
           xp: 35,
           difficulty: 'intermediate',
@@ -456,6 +460,7 @@ ORDER BY annee_embauche;
 SELECT * FROM employes
 WHERE nom LIKE 'D%'
 LIMIT 5;`,
+          expectedOutput: `Marchand|Félix|6000.0\nDurand|Clara|5200.0\nMartin|Alice|4500.0\n---\nDupont|Bob|2021\nBernard|David|2022\n---\nDurand|Clara\nDupont|Bob`,
           hint: 'Écris des requêtes SELECT avec WHERE, ORDER BY et LIKE.',
           xp: 15,
           difficulty: 'beginner',
@@ -505,6 +510,7 @@ LEFT JOIN commandes co ON c.id = co.client_id
 GROUP BY c.id, c.nom, c.ville
 ORDER BY ca_total DESC
 LIMIT 5;`,
+          expectedOutput: `Durand SA|Paris|2|4700.0\nMartin Inc|Lyon|1|800.0\nPetit SARL|Bordeaux|0|`,
           hint: 'Écris une requête avec JOIN, GROUP BY, COUNT et SUM.',
           xp: 30,
           difficulty: 'intermediate',
@@ -741,6 +747,7 @@ fn main() {
         println!("Nombre : {}", n);
     }
 }`,
+          expectedOutput: `Plus longue : monde !\nInversé : ruojnob\nNombre : 42`,
           hint: 'Utilise les références, lifetimes et Option<T> en Rust.',
           xp: 40,
           difficulty: 'advanced',

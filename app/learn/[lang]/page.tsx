@@ -8,8 +8,50 @@ import { createClient } from '@/lib/supabase';
 import { executeCode } from '@/lib/executor';
 import {
   ChevronLeft, ChevronRight, Play, RotateCcw, CheckCircle2,
-  BookOpen, Code2, Lightbulb, Trophy, ChevronDown, ChevronUp
+  BookOpen, Code2, Lightbulb, Trophy, ChevronDown, ChevronUp, Target, AlertCircle
 } from 'lucide-react';
+
+function explainError(error: string, language: string): string {
+  const e = error.toLowerCase();
+  if (language === 'python') {
+    if (e.includes('syntaxerror')) return 'Erreur de syntaxe : vérifie tes parenthèses, guillemets et indentation.';
+    if (e.includes('nameerror')) return 'Variable non définie : vérifie l\'orthographe ou déclare la variable avant usage.';
+    if (e.includes('typeerror')) return 'Mauvais type : tu utilises une valeur avec une opération incompatible.';
+    if (e.includes('indentationerror')) return 'Indentation incorrecte : utilise exactement 4 espaces.';
+    if (e.includes('indexerror')) return 'Index hors limites : la liste est plus courte que tu ne le penses.';
+    if (e.includes('zerodivisionerror')) return 'Division par zéro ! Vérifie que ton diviseur n\'est pas 0.';
+    if (e.includes('attributeerror')) return 'Attribut inexistant : cette méthode ou propriété n\'existe pas sur cet objet.';
+  }
+  if (language === 'javascript' || language === 'typescript') {
+    if (e.includes('syntaxerror')) return 'Erreur de syntaxe : vérifie tes accolades, parenthèses et virgules.';
+    if (e.includes('is not defined')) return 'Variable non définie : déclare la variable avec let, const ou var.';
+    if (e.includes('cannot read properties')) return 'Tu accèdes à une propriété d\'une valeur undefined ou null.';
+    if (e.includes('typeerror')) return 'Mauvais type : vérifie les types de tes variables.';
+  }
+  if (language === 'java') {
+    if (e.includes('cannot find symbol')) return 'Symbole introuvable : vérifie les noms de tes variables et méthodes.';
+    if (e.includes("';' expected")) return 'Point-virgule manquant à la fin d\'une instruction.';
+    if (e.includes('nullpointerexception')) return 'NullPointerException : tu utilises un objet qui vaut null.';
+    if (e.includes('arrayindexoutofbounds')) return 'Index de tableau hors limites : vérifie la taille de ton tableau.';
+    if (e.includes('illegal start of expression')) return 'Erreur de syntaxe : une accolade ou parenthèse est mal placée.';
+  }
+  if (language === 'c') {
+    if (e.includes('undeclared')) return 'Variable non déclarée : déclare ton type avant d\'utiliser la variable.';
+    if (e.includes('segmentation fault')) return 'Segmentation fault : accès mémoire invalide. Vérifie tes pointeurs.';
+    if (e.includes('implicit declaration')) return 'Fonction non déclarée : ajoute le #include correspondant en haut.';
+  }
+  if (language === 'rust') {
+    if (e.includes('cannot borrow')) return 'Erreur d\'ownership : une valeur ne peut être empruntée qu\'une fois à la fois.';
+    if (e.includes('use of moved value')) return 'Valeur déplacée : après un move, tu ne peux plus utiliser la variable.';
+    if (e.includes('mismatched types')) return 'Types incompatibles : vérifie que tes types correspondent.';
+  }
+  if (language === 'sql') {
+    if (e.includes('no such table')) return 'Table introuvable : vérifie le nom de la table (utilise les tables disponibles dans l\'exercice).';
+    if (e.includes('no such column')) return 'Colonne introuvable : vérifie le nom de la colonne.';
+    if (e.includes('syntax error')) return 'Erreur de syntaxe SQL : vérifie la structure de ta requête.';
+  }
+  return '';
+}
 
 const CodeEditor = dynamic(() => import('@/components/editor/CodeEditor'), { ssr: false });
 
@@ -45,6 +87,7 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
   const [showHint, setShowHint] = useState(false);
   const [showContent, setShowContent] = useState(true);
+  const [showExpected, setShowExpected] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
   const lesson = allLessons[currentIndex];
@@ -61,7 +104,7 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
   }, []);
 
   useEffect(() => {
-    if (lesson) { setCode(lesson.code); setOutput(''); setOutputError(false); setShowHint(false); }
+    if (lesson) { setCode(lesson.code); setOutput(''); setOutputError(false); setShowHint(false); setShowExpected(false); }
   }, [currentIndex, lesson?.id]);
 
   const runCode = async () => {
@@ -219,6 +262,12 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
               </div>
               <span className="text-xs text-white/30 ml-2">solution.{params.lang === 'javascript' ? 'js' : params.lang === 'typescript' ? 'ts' : params.lang}</span>
               <div className="ml-auto flex items-center gap-2">
+                {lesson.expectedOutput && (
+                  <button onClick={() => setShowExpected(!showExpected)} title="Résultat attendu"
+                    className={`flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all ${showExpected ? 'bg-purple-500/20 text-purple-400' : 'text-white/30 hover:text-white/70 hover:bg-white/5'}`}>
+                    <Target size={13} /> Attendu
+                  </button>
+                )}
                 <button onClick={() => setCode(lesson.code)} title="Réinitialiser"
                   className="p-1.5 text-white/30 hover:text-white/70 hover:bg-white/5 rounded transition-all">
                   <RotateCcw size={14} />
@@ -240,8 +289,19 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
               />
             </div>
 
+            {/* Expected output panel */}
+            {showExpected && lesson.expectedOutput && (
+              <div className="border-t border-purple-500/20 bg-purple-500/5 flex-shrink-0">
+                <div className="flex items-center gap-2 px-4 py-2 border-b border-purple-500/10">
+                  <Target size={13} className="text-purple-400" />
+                  <span className="text-xs text-purple-400 font-medium">Résultat attendu</span>
+                </div>
+                <pre className="px-4 py-3 font-mono text-sm text-purple-300 leading-relaxed whitespace-pre-wrap">{lesson.expectedOutput}</pre>
+              </div>
+            )}
+
             {/* Output */}
-            <div className="h-36 border-t border-white/5 flex flex-col flex-shrink-0">
+            <div className="border-t border-white/5 flex flex-col flex-shrink-0" style={{ minHeight: '9rem', maxHeight: '12rem' }}>
               <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5">
                 <Code2 size={13} className="text-white/30" />
                 <span className="text-xs text-white/40">Sortie</span>
@@ -249,6 +309,15 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
               <div className={`flex-1 overflow-y-auto px-4 py-3 font-mono text-sm leading-relaxed ${outputError ? 'text-red-400' : output ? 'text-green-400' : 'text-white/30 italic'}`}>
                 {output || 'Exécute ton code pour voir le résultat...'}
               </div>
+              {outputError && output && (() => {
+                const explanation = explainError(output, params.lang);
+                return explanation ? (
+                  <div className="flex items-start gap-2 px-4 py-2 bg-yellow-500/10 border-t border-yellow-500/20 text-xs text-yellow-300">
+                    <AlertCircle size={13} className="mt-0.5 flex-shrink-0" />
+                    <span>{explanation}</span>
+                  </div>
+                ) : null;
+              })()}
             </div>
           </div>
         </div>

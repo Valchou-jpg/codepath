@@ -49,7 +49,7 @@ INSERT INTO clients VALUES
   (1,'Durand SA','Paris'),(2,'Martin Inc','Lyon'),(3,'Petit SARL','Bordeaux');
 
 CREATE TABLE IF NOT EXISTS commandes (
-  id INTEGER PRIMARY KEY, client_id INTEGER, montant REAL, date TEXT
+  id INTEGER PRIMARY KEY, client_id INTEGER, total REAL, date TEXT
 );
 INSERT INTO commandes VALUES
   (1,1,1500,'2024-01-15'),(2,1,3200,'2024-02-20'),(3,2,800,'2024-03-10');
@@ -85,6 +85,9 @@ export async function POST(req: NextRequest) {
 
     if (data.compiler_error) {
       return NextResponse.json({ output: data.compiler_error, error: true });
+    }
+    if (data.program_error) {
+      return NextResponse.json({ output: data.program_error, error: true });
     }
 
     const output = data.program_output || data.program_message || '';
