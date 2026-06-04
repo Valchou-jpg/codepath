@@ -13,7 +13,7 @@ export function executeJavaScript(code: string): ExecResult {
 
   try {
     console.log = (...args: unknown[]) => logs.push(args.map(a =>
-      typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)
+      a === null ? 'null' : typeof a === 'object' ? JSON.stringify(a) : String(a)
     ).join(' '));
     console.error = (...args: unknown[]) => logs.push('ERROR: ' + args.map(String).join(' '));
     console.warn = (...args: unknown[]) => logs.push('WARN: ' + args.map(String).join(' '));

@@ -257,6 +257,196 @@ int main() {
         },
       ],
     },
+    {
+      id: 'c-strings-structs',
+      title: 'Chaînes et structures',
+      description: 'Manipulation de chaînes et définition de structs',
+      lessons: [
+        {
+          id: 'c-strings',
+          title: 'Chaînes de caractères',
+          description: 'Manipule les chaînes en C avec string.h.',
+          content: `## Chaînes en C
+
+En C, une chaîne est un tableau de \`char\` terminé par \`'\\0'\`.
+
+\`\`\`c
+#include <string.h>
+char s[] = "Bonjour";
+printf("%d\\n", strlen(s));     // 7
+strcpy(dest, src);             // copie
+strcat(dest, src);             // concatène
+strcmp(s1, s2);                // compare (0 = égaux)
+// Recherche
+char *p = strchr(s, 'o');      // pointeur vers 'o'
+\`\`\``,
+          code: `#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void majuscules(char *s) {
+    for (int i = 0; s[i]; i++) s[i] = toupper(s[i]);
+}
+
+int compter_voyelles(const char *s) {
+    int n = 0;
+    for (int i = 0; s[i]; i++)
+        if (strchr("aeiouAEIOU", s[i])) n++;
+    return n;
+}
+
+int main() {
+    char phrase[] = "Bonjour le Monde";
+    printf("Longueur : %d\\n", (int)strlen(phrase));
+    printf("Voyelles : %d\\n", compter_voyelles(phrase));
+
+    char copie[50];
+    strcpy(copie, phrase);
+    majuscules(copie);
+    printf("Majuscules : %s\\n", copie);
+
+    char s1[] = "abc", s2[] = "abd";
+    printf("Comparaison : %d\\n", strcmp(s1, s2) < 0 ? -1 : 1);
+    return 0;
+}`,
+          expectedOutput: `Longueur : 16\nVoyelles : 6\nMajuscules : BONJOUR LE MONDE\nComparaison : -1`,
+          hint: 'Utilise strlen, strcpy, toupper et strchr pour manipuler les chaînes.',
+          xp: 25,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'c-structs',
+          title: 'Structures (struct)',
+          description: 'Crée des types personnalisés avec struct en C.',
+          content: `## Structures en C
+
+\`\`\`c
+typedef struct {
+    char nom[50];
+    int age;
+    float salaire;
+} Employe;
+
+Employe e = {"Alice", 25, 3500.0};
+printf("%s, %d ans\\n", e.nom, e.age);
+
+// Tableau de structs
+Employe equipe[3] = {
+    {"Alice", 25, 3500}, {"Bob", 30, 4200}
+};
+\`\`\``,
+          code: `#include <stdio.h>
+#include <string.h>
+
+typedef struct {
+    char nom[30];
+    int age;
+    float note;
+} Etudiant;
+
+void afficher(Etudiant e) {
+    printf("%-15s %d ans  %.1f/20\\n", e.nom, e.age, e.note);
+}
+
+float moyenne(Etudiant *etudiants, int n) {
+    float total = 0;
+    for (int i = 0; i < n; i++) total += etudiants[i].note;
+    return total / n;
+}
+
+int main() {
+    Etudiant classe[] = {
+        {"Alice", 20, 16.5f},
+        {"Bob", 21, 12.0f},
+        {"Charlie", 19, 18.5f},
+        {"Diana", 22, 14.0f},
+    };
+    int n = 4;
+
+    printf("Classe :\\n");
+    for (int i = 0; i < n; i++) afficher(classe[i]);
+    printf("Moyenne : %.2f/20\\n", moyenne(classe, n));
+
+    // Trouve le meilleur
+    Etudiant meilleur = classe[0];
+    for (int i = 1; i < n; i++)
+        if (classe[i].note > meilleur.note) meilleur = classe[i];
+    printf("Meilleur : %s (%.1f)\\n", meilleur.nom, meilleur.note);
+    return 0;
+}`,
+          expectedOutput: `Classe :\nAlice           20 ans  16.5/20\nBob             21 ans  12.0/20\nCharlie         19 ans  18.5/20\nDiana           22 ans  14.0/20\nMoyenne : 15.25/20\nMeilleur : Charlie (18.5)`,
+          hint: 'Définis une struct Etudiant, affiche le tableau, calcule la moyenne et trouve le meilleur.',
+          xp: 35,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'c-sorting',
+          title: 'Algorithmes de tri',
+          description: 'Implémente le tri à bulles et le tri rapide en C.',
+          content: `## Tri en C
+
+**Tri à bulles :**
+\`\`\`c
+void bulles(int arr[], int n) {
+    for (int i = 0; i < n-1; i++)
+        for (int j = 0; j < n-i-1; j++)
+            if (arr[j] > arr[j+1]) {
+                int tmp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = tmp;
+            }
+}
+\`\`\`
+
+**qsort (bibliothèque standard) :**
+\`\`\`c
+#include <stdlib.h>
+int comparer(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+qsort(arr, n, sizeof(int), comparer);
+\`\`\``,
+          code: `#include <stdio.h>
+#include <stdlib.h>
+
+void afficher(int arr[], int n) {
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\\n");
+}
+
+void tri_bulles(int arr[], int n) {
+    for (int i = 0; i < n-1; i++)
+        for (int j = 0; j < n-i-1; j++)
+            if (arr[j] > arr[j+1]) {
+                int tmp = arr[j]; arr[j] = arr[j+1]; arr[j+1] = tmp;
+            }
+}
+
+int comparer(const void *a, const void *b) { return (*(int*)a - *(int*)b); }
+
+int main() {
+    int arr1[] = {64, 25, 12, 22, 11};
+    int arr2[] = {64, 25, 12, 22, 11};
+    int n = 5;
+
+    printf("Avant : "); afficher(arr1, n);
+    tri_bulles(arr1, n);
+    printf("Bulles : "); afficher(arr1, n);
+
+    qsort(arr2, n, sizeof(int), comparer);
+    printf("qsort  : "); afficher(arr2, n);
+    return 0;
+}`,
+          expectedOutput: `Avant : 64 25 12 22 11 \nBulles : 11 12 22 25 64 \nqsort  : 11 12 22 25 64 `,
+          hint: 'Implémente tri_bulles() avec deux boucles imbriquées, puis utilise qsort de stdlib.h.',
+          xp: 35,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+      ],
+    },
   ],
   courseContent: [
     {
@@ -596,6 +786,310 @@ public class Main {
         },
       ],
     },
+    {
+      id: 'java-advanced',
+      title: 'Java avancé',
+      description: 'Streams, lambdas, exceptions, Optional et String',
+      lessons: [
+        {
+          id: 'java-strings',
+          title: 'Manipulation de chaînes',
+          description: 'Utilise les méthodes de String et StringBuilder.',
+          content: `## Strings en Java
+
+\`\`\`java
+String s = "Bonjour le Monde";
+s.length()          // 17
+s.toUpperCase()     // BONJOUR LE MONDE
+s.contains("le")    // true
+s.replace("le", "THE")
+s.split(" ")        // tableau ["Bonjour","le","Monde"]
+s.trim()            // supprime espaces
+String.format("%s a %d ans", "Alice", 25)
+
+// StringBuilder pour concaténer
+StringBuilder sb = new StringBuilder();
+sb.append("Hello").append(", ").append("World");
+\`\`\``,
+          code: `public class Main {
+    public static void main(String[] args) {
+        String phrase = "  Bonjour le Monde !  ";
+        System.out.println(phrase.trim());
+        System.out.println(phrase.trim().toUpperCase());
+        System.out.printf("Longueur : %d%n", phrase.trim().length());
+
+        String[] mots = phrase.trim().split("\\\\s+");
+        System.out.printf("Mots : %d%n", mots.length);
+
+        // Vérifications
+        System.out.println(phrase.trim().startsWith("Bonjour"));
+        System.out.println(phrase.trim().contains("Monde"));
+
+        // StringBuilder
+        StringBuilder sb = new StringBuilder();
+        for (String mot : mots) {
+            sb.append(mot.charAt(0));
+        }
+        System.out.println("Initiales : " + sb);
+
+        // Inverser
+        String inv = new StringBuilder(phrase.trim()).reverse().toString();
+        System.out.println("Inversé : " + inv);
+    }
+}`,
+          expectedOutput: `Bonjour le Monde !\nBONJOUR LE MONDE !\nLongueur : 18\nMots : 4\ntrue\ntrue\nInitiales : BlM!\nInversé : ! ednoM el ruojnoB`,
+          hint: 'Utilise trim, toUpperCase, split, startsWith, StringBuilder et reverse.',
+          xp: 20,
+          difficulty: 'beginner',
+          type: 'lesson',
+        },
+        {
+          id: 'java-exceptions',
+          title: 'Gestion des exceptions',
+          description: 'Crée et gère des exceptions personnalisées en Java.',
+          content: `## Exceptions en Java
+
+\`\`\`java
+// Exception personnalisée
+class MonException extends Exception {
+    public MonException(String msg) { super(msg); }
+}
+
+// try-catch-finally
+try {
+    if (x < 0) throw new MonException("Valeur négative");
+    // ...
+} catch (MonException e) {
+    System.out.println("Erreur : " + e.getMessage());
+} catch (Exception e) {
+    System.out.println("Erreur générale : " + e.getMessage());
+} finally {
+    System.out.println("Toujours exécuté");
+}
+\`\`\``,
+          code: `class SoldeInsuffisantException extends Exception {
+    private double solde;
+    public SoldeInsuffisantException(double solde, double montant) {
+        super(String.format("Solde %.0f€ insuffisant pour retirer %.0f€", solde, montant));
+        this.solde = solde;
+    }
+    public double getSolde() { return solde; }
+}
+
+class Compte {
+    private String nom;
+    private double solde;
+
+    Compte(String nom, double solde) { this.nom = nom; this.solde = solde; }
+
+    void retirer(double montant) throws SoldeInsuffisantException {
+        if (montant > solde) throw new SoldeInsuffisantException(solde, montant);
+        solde -= montant;
+        System.out.printf("%s : retrait %.0f€ → solde %.0f€%n", nom, montant, solde);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Compte c = new Compte("Alice", 1000);
+        double[] retraits = {200, 500, 400};
+        for (double montant : retraits) {
+            try {
+                c.retirer(montant);
+            } catch (SoldeInsuffisantException e) {
+                System.out.println("Refus : " + e.getMessage());
+            }
+        }
+    }
+}`,
+          expectedOutput: `Alice : retrait 200€ → solde 800€\nAlice : retrait 500€ → solde 300€\nRefus : Solde 300€ insuffisant pour retirer 400€`,
+          hint: 'Crée SoldeInsuffisantException, lance-la dans retirer() et capture-la dans main.',
+          xp: 30,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'java-streams',
+          title: 'Streams et lambdas',
+          description: 'Utilise l\'API Stream de Java 8+ pour traiter des collections.',
+          content: `## Streams Java
+
+\`\`\`java
+import java.util.*;
+import java.util.stream.*;
+
+List<Integer> nums = List.of(1,2,3,4,5,6,7,8,9,10);
+
+// filter + map + collect
+List<Integer> pairs = nums.stream()
+    .filter(n -> n % 2 == 0)
+    .map(n -> n * n)
+    .collect(Collectors.toList());
+
+// reduce
+int somme = nums.stream().reduce(0, Integer::sum);
+
+// sorted + distinct + limit
+nums.stream().sorted().distinct().limit(5).forEach(System.out::println);
+\`\`\``,
+          code: `import java.util.*;
+import java.util.stream.*;
+
+public class Main {
+    public static void main(String[] args) {
+        List<String> noms = List.of("Alice","Bob","Charlie","Diana","Eve","Frank");
+
+        // Filtrer et transformer
+        List<String> longs = noms.stream()
+            .filter(n -> n.length() > 4)
+            .map(String::toUpperCase)
+            .sorted()
+            .collect(Collectors.toList());
+        System.out.println("Longs : " + longs);
+
+        // Statistiques
+        IntSummaryStatistics stats = noms.stream()
+            .mapToInt(String::length)
+            .summaryStatistics();
+        System.out.printf("Min: %d, Max: %d, Moy: %.1f%n",
+            stats.getMin(), stats.getMax(), stats.getAverage());
+
+        // Grouper
+        Map<Integer, List<String>> parLongueur = noms.stream()
+            .collect(Collectors.groupingBy(String::length));
+        new TreeMap<>(parLongueur).forEach((len, liste) ->
+            System.out.println(len + " lettres : " + liste));
+    }
+}`,
+          expectedOutput: `Longs : [ALICE, CHARLIE, DIANA, FRANK]\nMin: 3, Max: 7, Moy: 4.7\n3 lettres : [Bob, Eve]\n5 lettres : [Alice, Diana, Frank]\n7 lettres : [Charlie]`,
+          hint: 'Utilise stream().filter().map().collect(), mapToInt().summaryStatistics() et groupingBy().',
+          xp: 40,
+          difficulty: 'advanced',
+          type: 'lesson',
+        },
+        {
+          id: 'java-optional',
+          title: 'Optional et null-safety',
+          description: 'Utilise Optional pour éviter les NullPointerException.',
+          content: `## Optional en Java
+
+\`\`\`java
+Optional<String> opt = Optional.of("Bonjour");
+Optional<String> vide = Optional.empty();
+
+opt.isPresent()           // true
+opt.get()                 // "Bonjour"
+opt.orElse("défaut")      // "Bonjour"
+vide.orElse("défaut")     // "défaut"
+opt.map(String::toUpperCase)  // Optional("BONJOUR")
+opt.filter(s -> s.length() > 5) // Optional.empty (longueur=7 > 5, garde)
+\`\`\``,
+          code: `import java.util.*;
+
+public class Main {
+    static Optional<String> chercherEmail(String nom, Map<String, String> annuaire) {
+        return Optional.ofNullable(annuaire.get(nom));
+    }
+
+    static String domaine(String email) {
+        return email.substring(email.indexOf('@') + 1);
+    }
+
+    public static void main(String[] args) {
+        Map<String, String> annuaire = Map.of(
+            "Alice", "alice@gmail.com",
+            "Bob", "bob@company.fr"
+        );
+
+        String[] cherches = {"Alice", "Charlie", "Bob", "Diana"};
+
+        for (String nom : cherches) {
+            String résultat = chercherEmail(nom, annuaire)
+                .map(email -> nom + " → " + email + " (" + domaine(email) + ")")
+                .orElse(nom + " → introuvable");
+            System.out.println(résultat);
+        }
+
+        // Chaînage
+        Optional<String> premierGmail = annuaire.values().stream()
+            .filter(e -> e.endsWith("@gmail.com"))
+            .findFirst();
+        premierGmail.ifPresent(e -> System.out.println("Premier Gmail : " + e));
+    }
+}`,
+          expectedOutput: `Alice → alice@gmail.com (gmail.com)\nCharlie → introuvable\nBob → bob@company.fr (company.fr)\nDiana → introuvable\nPremier Gmail : alice@gmail.com`,
+          hint: 'Retourne Optional.ofNullable() depuis chercherEmail, puis utilise .map().orElse() pour formater.',
+          xp: 35,
+          difficulty: 'advanced',
+          type: 'lesson',
+        },
+        {
+          id: 'java-generics',
+          title: 'Génériques Java',
+          description: 'Crée des classes et méthodes génériques en Java.',
+          content: `## Génériques en Java
+
+\`\`\`java
+// Classe générique
+class Paire<A, B> {
+    private A premier;
+    private B second;
+    Paire(A a, B b) { premier = a; second = b; }
+    A getPremier() { return premier; }
+    B getSecond() { return second; }
+}
+
+// Méthode générique
+static <T extends Comparable<T>> T max(T a, T b) {
+    return a.compareTo(b) >= 0 ? a : b;
+}
+\`\`\``,
+          code: `import java.util.*;
+
+class Pile<T> {
+    private List<T> elements = new ArrayList<>();
+
+    void empiler(T element) { elements.add(element); }
+
+    T dépiler() {
+        if (vide()) throw new NoSuchElementException("Pile vide");
+        return elements.remove(elements.size() - 1);
+    }
+
+    T sommet() {
+        if (vide()) throw new NoSuchElementException("Pile vide");
+        return elements.get(elements.size() - 1);
+    }
+
+    boolean vide() { return elements.isEmpty(); }
+    int taille() { return elements.size(); }
+    public String toString() { return elements.toString(); }
+}
+
+public class Main {
+    static <T extends Comparable<T>> T maximum(List<T> liste) {
+        return liste.stream().max(Comparator.naturalOrder()).orElseThrow();
+    }
+
+    public static void main(String[] args) {
+        Pile<Integer> pile = new Pile<>();
+        for (int n : new int[]{5, 2, 8, 1, 9}) pile.empiler(n);
+        System.out.println("Pile : " + pile);
+        System.out.println("Dépile : " + pile.dépiler());
+        System.out.println("Sommet : " + pile.sommet());
+
+        System.out.println("Max entiers : " + maximum(List.of(3, 1, 7, 2, 9)));
+        System.out.println("Max strings : " + maximum(List.of("banane","pomme","kiwi")));
+    }
+}`,
+          expectedOutput: `Pile : [5, 2, 8, 1, 9]\nDépile : 9\nSommet : 1\nMax entiers : 9\nMax strings : pomme`,
+          hint: 'Crée une classe générique Pile<T> avec empiler/dépiler, et une méthode générique maximum<T extends Comparable<T>>.',
+          xp: 40,
+          difficulty: 'advanced',
+          type: 'lesson',
+        },
+      ],
+    },
   ],
   courseContent: [
     {
@@ -796,6 +1290,148 @@ ORDER BY salaire_moyen DESC;`,
         },
       ],
     },
+    {
+      id: 'sql-advanced',
+      title: 'SQL avancé',
+      description: 'INSERT/UPDATE/DELETE, sous-requêtes et fonctions de fenêtre',
+      lessons: [
+        {
+          id: 'sql-crud',
+          title: 'INSERT, UPDATE, DELETE',
+          description: 'Modifie les données avec les commandes SQL de base.',
+          content: `## Modifier les données
+
+\`\`\`sql
+-- INSERT
+INSERT INTO employes (id, nom, prenom, salaire, departement, annee_embauche, email, dept_id)
+VALUES (8, 'Nouveau', 'Hugo', 3000, 'IT', 2024, 'hugo@co.com', 1);
+
+-- UPDATE
+UPDATE employes SET salaire = salaire * 1.1 WHERE departement = 'Informatique';
+
+-- DELETE
+DELETE FROM employes WHERE annee_embauche > 2021;
+
+-- Vérifier après
+SELECT COUNT(*) FROM employes;
+\`\`\``,
+          code: `-- Insère un nouvel employé
+INSERT INTO employes VALUES (8, 'Nouveau', 'Hugo', 3000, 'Informatique', 2024, 'hugo@codepath.fr', 1);
+
+-- Augmentation de 10% pour l'Informatique
+UPDATE employes SET salaire = salaire * 1.1 WHERE departement = 'Informatique';
+
+-- Vérifie les salaires mis à jour
+SELECT nom, prenom, ROUND(salaire, 0) AS salaire FROM employes WHERE departement = 'Informatique' ORDER BY salaire DESC;`,
+          expectedOutput: `Marchand|Félix|6600.0\nDurand|Clara|5720.0\nMartin|Alice|4950.0\nNouveau|Hugo|3300.0`,
+          hint: 'Insère Hugo avec INSERT, applique +10% avec UPDATE WHERE, puis SELECT pour vérifier.',
+          xp: 25,
+          difficulty: 'beginner',
+          type: 'lesson',
+        },
+        {
+          id: 'sql-subqueries',
+          title: 'Sous-requêtes',
+          description: 'Utilise des sous-requêtes pour des filtres avancés.',
+          content: `## Sous-requêtes
+
+\`\`\`sql
+-- Dans WHERE
+SELECT nom FROM employes
+WHERE salaire > (SELECT AVG(salaire) FROM employes);
+
+-- Dans FROM (table dérivée)
+SELECT dept, moy FROM (
+    SELECT departement AS dept, AVG(salaire) AS moy
+    FROM employes GROUP BY departement
+) WHERE moy > 4000;
+
+-- EXISTS
+SELECT nom FROM employes e
+WHERE EXISTS (
+    SELECT 1 FROM projets p WHERE p.employe_id = e.id
+);
+\`\`\``,
+          code: `-- Employés avec un salaire supérieur à la moyenne
+SELECT nom, prenom, salaire
+FROM employes
+WHERE salaire > (SELECT AVG(salaire) FROM employes)
+ORDER BY salaire DESC;`,
+          expectedOutput: `Marchand|Félix|6000.0\nDurand|Clara|5200.0\nMartin|Alice|4500.0`,
+          hint: 'Utilise (SELECT AVG(salaire) FROM employes) dans le WHERE pour comparer à la moyenne.',
+          xp: 30,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'sql-window',
+          title: 'Fonctions de fenêtre',
+          description: 'Utilise ROW_NUMBER, RANK et les fonctions de fenêtre.',
+          content: `## Fonctions de fenêtre (Window functions)
+
+\`\`\`sql
+SELECT nom, salaire,
+    RANK() OVER (ORDER BY salaire DESC) AS rang,
+    ROUND(AVG(salaire) OVER (), 0) AS moy_globale,
+    salaire - AVG(salaire) OVER () AS ecart_moy
+FROM employes;
+\`\`\`
+
+Contrairement à GROUP BY, les fonctions de fenêtre gardent **toutes les lignes**.`,
+          code: `SELECT
+    nom,
+    departement,
+    salaire,
+    RANK() OVER (ORDER BY salaire DESC) AS rang_global,
+    RANK() OVER (PARTITION BY departement ORDER BY salaire DESC) AS rang_dept,
+    ROUND(AVG(salaire) OVER (PARTITION BY departement), 0) AS moy_dept
+FROM employes
+ORDER BY departement, salaire DESC;`,
+          expectedOutput: `Marchand|Informatique|6000.0|1|1|5233.0\nDurand|Informatique|5200.0|3|2|5233.0\nMartin|Informatique|4500.0|5|3|5233.0\nPetit|RH|4100.0|6|1|3950.0\nDupont|RH|3800.0|7|2|3950.0\nMorel|Marketing|3500.0|4|1|3350.0\nBernard|Marketing|3200.0|2|2|3350.0`,
+          hint: 'Utilise RANK() OVER (ORDER BY salaire DESC) et RANK() OVER (PARTITION BY departement ORDER BY salaire DESC).',
+          xp: 40,
+          difficulty: 'advanced',
+          type: 'lesson',
+        },
+        {
+          id: 'sql-views',
+          title: 'Vues et requêtes complexes',
+          description: 'Crée des vues et combine plusieurs opérations SQL.',
+          content: `## Vues SQL
+
+Une vue est une requête sauvegardée réutilisable.
+
+\`\`\`sql
+CREATE VIEW employes_info AS
+SELECT e.nom, e.prenom, e.salaire, d.nom AS dept
+FROM employes e
+JOIN departements d ON e.dept_id = d.id;
+
+-- Utiliser la vue
+SELECT * FROM employes_info WHERE salaire > 4000;
+
+-- Supprimer
+DROP VIEW IF EXISTS employes_info;
+\`\`\``,
+          code: `-- Rapport complet : employés avec leur département et leurs projets
+SELECT
+    e.nom || ' ' || e.prenom AS employe,
+    e.salaire,
+    d.nom AS departement,
+    COALESCE(p.nom, 'Aucun projet') AS projet
+FROM employes e
+JOIN departements d ON e.dept_id = d.id
+LEFT JOIN projets p ON e.id = p.employe_id
+ORDER BY e.salaire DESC
+LIMIT 5;`,
+          expectedOutput: `Marchand Félix|6000.0|Informatique|CRM\nDurand Clara|5200.0|Informatique|Appli Mobile\nMartin Alice|4500.0|Informatique|Site Web\nPetit Emma|4100.0|RH|Aucun projet\nMorel Grace|3500.0|Marketing|Aucun projet`,
+          hint: 'Utilise JOIN pour les départements, LEFT JOIN pour les projets, et COALESCE pour "Aucun projet".',
+          xp: 35,
+          difficulty: 'advanced',
+          type: 'lesson',
+        },
+      ],
+    },
   ],
   courseContent: [
     {
@@ -982,6 +1618,183 @@ console.log("Catégories :", Object.keys(parCategorie));`,
           expectedOutput: `Pairs : [ 2, 4, 6, 8, 10 ]\nCarrés des pairs : [ 4, 16, 36, 64, 100 ]\nCatégories : [ 'Informatique', 'Bureau' ]`,
           hint: 'Crée 3 fonctions génériques : filtrer<T>, transformer<T,U> et grouper<T>.',
           xp: 35,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'ts-classes',
+          title: 'Classes TypeScript',
+          description: 'Utilise les modificateurs d\'accès, les getters/setters et l\'héritage.',
+          content: `## Classes en TypeScript
+
+\`\`\`typescript
+class Compte {
+    private _solde: number;
+    readonly id: string;
+
+    constructor(id: string, solde: number = 0) {
+        this.id = id;
+        this._solde = solde;
+    }
+
+    get solde(): number { return this._solde; }
+
+    deposer(montant: number): void {
+        if (montant <= 0) throw new Error("Montant invalide");
+        this._solde += montant;
+    }
+}
+\`\`\``,
+          code: `abstract class Vehicule {
+    protected readonly marque: string;
+    protected vitesse: number = 0;
+
+    constructor(marque: string) { this.marque = marque; }
+
+    accelerer(km: number): void { this.vitesse += km; }
+    freiner(km: number): void { this.vitesse = Math.max(0, this.vitesse - km); }
+
+    abstract typeMoteur(): string;
+
+    statut(): string {
+        return \`\${this.marque} [\${this.typeMoteur()}] — \${this.vitesse} km/h\`;
+    }
+}
+
+class Voiture extends Vehicule {
+    typeMoteur() { return "Essence"; }
+}
+
+class Electrique extends Vehicule {
+    private autonomie: number;
+    constructor(marque: string, autonomie: number) {
+        super(marque);
+        this.autonomie = autonomie;
+    }
+    typeMoteur() { return \`Électrique (\${this.autonomie}km)\`; }
+}
+
+const v1 = new Voiture("Toyota");
+const v2 = new Electrique("Tesla", 500);
+
+v1.accelerer(80); v1.freiner(20);
+v2.accelerer(120);
+
+console.log(v1.statut());
+console.log(v2.statut());
+console.log(v2 instanceof Vehicule);`,
+          expectedOutput: `Toyota [Essence] — 60 km/h\nTesla [Électrique (500km)] — 120 km/h\ntrue`,
+          hint: 'Crée une classe abstraite Vehicule avec accelerer/freiner, étendue par Voiture et Electrique.',
+          xp: 35,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'ts-unions',
+          title: 'Unions discriminées',
+          description: 'Utilise les unions discriminées pour typer des données hétérogènes.',
+          content: `## Unions discriminées
+
+\`\`\`typescript
+type Résultat =
+    | { statut: "succès"; données: string }
+    | { statut: "erreur"; message: string; code: number };
+
+function traiter(r: Résultat): string {
+    switch (r.statut) {
+        case "succès": return \`OK: \${r.données}\`;
+        case "erreur": return \`Erreur \${r.code}: \${r.message}\`;
+    }
+}
+\`\`\``,
+          code: `type Forme =
+    | { type: "cercle"; rayon: number }
+    | { type: "rectangle"; largeur: number; hauteur: number }
+    | { type: "triangle"; base: number; hauteur: number };
+
+function aire(f: Forme): number {
+    switch (f.type) {
+        case "cercle":    return Math.PI * f.rayon ** 2;
+        case "rectangle": return f.largeur * f.hauteur;
+        case "triangle":  return (f.base * f.hauteur) / 2;
+    }
+}
+
+function décrire(f: Forme): string {
+    switch (f.type) {
+        case "cercle":    return \`Cercle r=\${f.rayon}\`;
+        case "rectangle": return \`Rectangle \${f.largeur}×\${f.hauteur}\`;
+        case "triangle":  return \`Triangle b=\${f.base} h=\${f.hauteur}\`;
+    }
+}
+
+const formes: Forme[] = [
+    { type: "cercle", rayon: 5 },
+    { type: "rectangle", largeur: 4, hauteur: 6 },
+    { type: "triangle", base: 8, hauteur: 3 },
+];
+
+formes.forEach(f => console.log(\`\${décrire(f)} → aire = \${aire(f).toFixed(2)}\`));
+const total = formes.reduce((s, f) => s + aire(f), 0);
+console.log(\`Aire totale : \${total.toFixed(2)}\`);`,
+          expectedOutput: `Cercle r=5 → aire = 78.54\nRectangle 4×6 → aire = 24.00\nTriangle b=8 h=3 → aire = 12.00\nAire totale : 114.54`,
+          hint: 'Crée un type union Forme avec 3 variants, puis les fonctions aire() et décrire() avec switch.',
+          xp: 35,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'ts-type-guards',
+          title: 'Type guards et narrowing',
+          description: 'Utilise les type guards pour affiner les types au runtime.',
+          content: `## Type guards
+
+\`\`\`typescript
+// Type guard avec is
+function estString(val: unknown): val is string {
+    return typeof val === "string";
+}
+
+// Type guard avec instanceof
+function estDate(val: unknown): val is Date {
+    return val instanceof Date;
+}
+
+// Narrowing automatique
+function afficher(val: string | number) {
+    if (typeof val === "string") {
+        console.log(val.toUpperCase()); // TS sait que c'est string
+    } else {
+        console.log(val.toFixed(2));    // TS sait que c'est number
+    }
+}
+\`\`\``,
+          code: `type Primitive = string | number | boolean | null;
+
+function typeOf(val: Primitive): string {
+    if (val === null) return "null";
+    if (typeof val === "string") return \`string("\${val}")\`;
+    if (typeof val === "number") return \`number(\${val})\`;
+    if (typeof val === "boolean") return \`boolean(\${val})\`;
+    return "inconnu";
+}
+
+function somme(valeurs: (string | number)[]): number {
+    return valeurs.reduce<number>((acc, v) => {
+        if (typeof v === "number") return acc + v;
+        const n = parseFloat(v);
+        return isNaN(n) ? acc : acc + n;
+    }, 0);
+}
+
+const vals: Primitive[] = ["bonjour", 42, true, null, 3.14, false];
+vals.forEach(v => console.log(typeOf(v)));
+
+const mix: (string | number)[] = [1, "2.5", 3, "abc", "10"];
+console.log(\`Somme : \${somme(mix)}\`);`,
+          expectedOutput: `string("bonjour")\nnumber(42)\nboolean(true)\nnull\nnumber(3.14)\nboolean(false)\nSomme : 16.5`,
+          hint: 'Crée typeOf() avec des type guards, et somme() qui filtre les valeurs convertibles en nombre.',
+          xp: 30,
           difficulty: 'intermediate',
           type: 'lesson',
         },
@@ -1267,6 +2080,319 @@ let somme: i32 = v.iter().sum();
           hint: 'Utilise .filter(), .map() et .sum() sur un vecteur d\'entiers 1 à 10.',
           xp: 30,
           difficulty: 'intermediate',
+          type: 'lesson',
+        },
+      ],
+    },
+    {
+      id: 'rust-advanced',
+      title: 'Structs, traits et gestion d\'erreurs',
+      description: 'Structs avec impl, traits, Result et HashMap',
+      lessons: [
+        {
+          id: 'rust-structs',
+          title: 'Structs et impl',
+          description: 'Crée des structs avec des méthodes via impl.',
+          content: `## Structs en Rust
+
+\`\`\`rust
+struct Rectangle {
+    largeur: f64,
+    hauteur: f64,
+}
+
+impl Rectangle {
+    // Constructeur
+    fn nouveau(l: f64, h: f64) -> Self {
+        Rectangle { largeur: l, hauteur: h }
+    }
+    // Méthode
+    fn aire(&self) -> f64 { self.largeur * self.hauteur }
+    // Méthode qui modifie
+    fn agrandir(&mut self, facteur: f64) {
+        self.largeur *= facteur;
+        self.hauteur *= facteur;
+    }
+}
+\`\`\``,
+          code: `#[derive(Debug)]
+struct Etudiant {
+    nom: String,
+    notes: Vec<f64>,
+}
+
+impl Etudiant {
+    fn nouveau(nom: &str) -> Self {
+        Etudiant { nom: nom.to_string(), notes: Vec::new() }
+    }
+
+    fn ajouter_note(&mut self, note: f64) {
+        self.notes.push(note);
+    }
+
+    fn moyenne(&self) -> f64 {
+        if self.notes.is_empty() { return 0.0; }
+        self.notes.iter().sum::<f64>() / self.notes.len() as f64
+    }
+
+    fn mention(&self) -> &str {
+        match self.moyenne() as u32 {
+            16..=20 => "Très bien",
+            14..=15 => "Bien",
+            12..=13 => "Assez bien",
+            10..=11 => "Passable",
+            _ => "Insuffisant",
+        }
+    }
+}
+
+fn main() {
+    let mut alice = Etudiant::nouveau("Alice");
+    for note in [16.5, 14.0, 18.0, 15.5] { alice.ajouter_note(note); }
+    println!("{} : moy={:.2}, {}", alice.nom, alice.moyenne(), alice.mention());
+
+    let mut bob = Etudiant::nouveau("Bob");
+    for note in [9.0, 11.0, 8.5, 10.0] { bob.ajouter_note(note); }
+    println!("{} : moy={:.2}, {}", bob.nom, bob.moyenne(), bob.mention());
+}`,
+          expectedOutput: `Alice : moy=16.00, Très bien\nBob : moy=9.62, Insuffisant`,
+          hint: 'Crée struct Etudiant avec Vec<f64> pour les notes, et impl avec moyenne() et mention().',
+          xp: 30,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'rust-traits',
+          title: 'Traits',
+          description: 'Définis et implémente des traits pour le polymorphisme.',
+          content: `## Traits en Rust
+
+\`\`\`rust
+trait Aire {
+    fn aire(&self) -> f64;
+    // Méthode par défaut
+    fn est_grand(&self) -> bool { self.aire() > 100.0 }
+}
+
+struct Cercle { rayon: f64 }
+impl Aire for Cercle {
+    fn aire(&self) -> f64 { std::f64::consts::PI * self.rayon.powi(2) }
+}
+
+// Paramètre qui implémente un trait
+fn afficher_aire(forme: &impl Aire) {
+    println!("Aire : {:.2}", forme.aire());
+}
+\`\`\``,
+          code: `trait Describable {
+    fn description(&self) -> String;
+    fn court(&self) -> String {
+        let d = self.description();
+        if d.len() > 20 { format!("{}...", &d[..20]) } else { d }
+    }
+}
+
+struct Livre { titre: String, auteur: String, pages: u32 }
+struct Film  { titre: String, duree: u32 }
+
+impl Describable for Livre {
+    fn description(&self) -> String {
+        format!("\"{}\" par {} ({} pages)", self.titre, self.auteur, self.pages)
+    }
+}
+
+impl Describable for Film {
+    fn description(&self) -> String {
+        format!("\"{}\" — {}min", self.titre, self.duree)
+    }
+}
+
+fn afficher(item: &dyn Describable) {
+    println!("{}", item.description());
+}
+
+fn main() {
+    let items: Vec<Box<dyn Describable>> = vec![
+        Box::new(Livre { titre: "Rust en pratique".into(), auteur: "Alice".into(), pages: 350 }),
+        Box::new(Film { titre: "Le Programmeur".into(), duree: 120 }),
+        Box::new(Livre { titre: "Zero to Production".into(), auteur: "Luca".into(), pages: 485 }),
+    ];
+
+    for item in &items { afficher(item.as_ref()); }
+}`,
+          expectedOutput: `"Rust en pratique" par Alice (350 pages)\n"Le Programmeur" — 120min\n"Zero to Production" par Luca (485 pages)`,
+          hint: 'Définis le trait Describable, implémente-le sur Livre et Film, et utilise Box<dyn Describable>.',
+          xp: 35,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'rust-result',
+          title: 'Gestion des erreurs avec Result',
+          description: 'Utilise Result<T, E> et l\'opérateur ? pour gérer les erreurs.',
+          content: `## Result en Rust
+
+\`\`\`rust
+fn diviser(a: f64, b: f64) -> Result<f64, String> {
+    if b == 0.0 { Err("Division par zéro".to_string()) }
+    else { Ok(a / b) }
+}
+
+// Avec ? (propage l'erreur)
+fn calculer(a: f64, b: f64, c: f64) -> Result<f64, String> {
+    let r1 = diviser(a, b)?;  // si Err → retourne Err
+    let r2 = diviser(r1, c)?;
+    Ok(r2)
+}
+
+match diviser(10.0, 2.0) {
+    Ok(r)  => println!("Résultat : {}", r),
+    Err(e) => println!("Erreur : {}", e),
+}
+\`\`\``,
+          code: `#[derive(Debug)]
+enum ErreurCalc {
+    DivisionParZero,
+    RacineNegative,
+    Invalide(String),
+}
+
+impl std::fmt::Display for ErreurCalc {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            ErreurCalc::DivisionParZero => write!(f, "Division par zéro"),
+            ErreurCalc::RacineNegative  => write!(f, "Racine d'un nombre négatif"),
+            ErreurCalc::Invalide(msg)   => write!(f, "Invalide : {}", msg),
+        }
+    }
+}
+
+fn diviser(a: f64, b: f64) -> Result<f64, ErreurCalc> {
+    if b == 0.0 { Err(ErreurCalc::DivisionParZero) }
+    else { Ok(a / b) }
+}
+
+fn racine(x: f64) -> Result<f64, ErreurCalc> {
+    if x < 0.0 { Err(ErreurCalc::RacineNegative) }
+    else { Ok(x.sqrt()) }
+}
+
+fn main() {
+    let opérations = vec![(16.0, 4.0), (10.0, 0.0), (-4.0, 1.0)];
+
+    for (a, b) in opérations {
+        let résultat = diviser(a, b).and_then(|r| racine(r));
+        match résultat {
+            Ok(v)  => println!("√({}/{}) = {:.2}", a, b, v),
+            Err(e) => println!("Erreur : {}", e),
+        }
+    }
+}`,
+          expectedOutput: `√(16/4) = 2.00\nErreur : Division par zéro\nErreur : Division par zéro`,
+          hint: 'Crée enum ErreurCalc, implémente Display, et utilise .and_then() pour chaîner diviser et racine.',
+          xp: 40,
+          difficulty: 'advanced',
+          type: 'lesson',
+        },
+        {
+          id: 'rust-hashmap',
+          title: 'HashMap et collections',
+          description: 'Utilise HashMap pour stocker et manipuler des données associatives.',
+          content: `## HashMap en Rust
+
+\`\`\`rust
+use std::collections::HashMap;
+
+let mut scores: HashMap<String, i32> = HashMap::new();
+scores.insert("Alice".to_string(), 85);
+scores.entry("Bob".to_string()).or_insert(0);
+
+// Accès
+let s = scores.get("Alice");  // Option<&i32>
+let s = scores["Alice"];      // i32 (panique si absent)
+
+// Itération
+for (nom, score) in &scores {
+    println!("{}: {}", nom, score);
+}
+\`\`\``,
+          code: `use std::collections::HashMap;
+
+fn compter_mots(texte: &str) -> HashMap<&str, usize> {
+    let mut freq = HashMap::new();
+    for mot in texte.split_whitespace() {
+        *freq.entry(mot).or_insert(0) += 1;
+    }
+    freq
+}
+
+fn main() {
+    let texte = "le chat mange le poisson le chat dort";
+    let freq = compter_mots(texte);
+
+    // Trier par fréquence décroissante
+    let mut pairs: Vec<(&&str, &usize)> = freq.iter().collect();
+    pairs.sort_by(|a, b| b.1.cmp(a.1).then(a.0.cmp(b.0)));
+
+    for (mot, count) in &pairs {
+        println!("{}: {}x", mot, count);
+    }
+    println!("Mots distincts : {}", freq.len());
+}`,
+          expectedOutput: `le: 3x\nchat: 2x\ndort: 1x\nmange: 1x\npoisson: 1x\nMots distincts : 5`,
+          hint: 'Utilise .entry().or_insert(0) pour compter, puis trie par fréquence avec sort_by.',
+          xp: 30,
+          difficulty: 'intermediate',
+          type: 'lesson',
+        },
+        {
+          id: 'rust-closures',
+          title: 'Closures et fonctions d\'ordre supérieur',
+          description: 'Maîtrise les closures Rust et les fonctions qui les acceptent.',
+          content: `## Closures en Rust
+
+\`\`\`rust
+// Closure qui capture son environnement
+let x = 5;
+let ajouter_x = |n| n + x;
+println!("{}", ajouter_x(3)); // 8
+
+// Fn, FnMut, FnOnce
+fn appliquer<F: Fn(i32) -> i32>(f: F, val: i32) -> i32 { f(val) }
+
+let double = |n: i32| n * 2;
+println!("{}", appliquer(double, 5)); // 10
+
+// move — capture par valeur
+let msg = String::from("Bonjour");
+let saluer = move || println!("{}", msg);
+saluer(); // msg est déplacé dans la closure
+\`\`\``,
+          code: `fn appliquer_n_fois<F: Fn(i32) -> i32>(f: F, mut val: i32, n: u32) -> i32 {
+    for _ in 0..n { val = f(val); }
+    val
+}
+
+fn composer<F, G>(f: F, g: G) -> impl Fn(i32) -> i32
+where F: Fn(i32) -> i32, G: Fn(i32) -> i32 {
+    move |x| g(f(x))
+}
+
+fn main() {
+    let double = |x: i32| x * 2;
+    let ajouter_un = |x: i32| x + 1;
+
+    println!("double 3 fois depuis 1 : {}", appliquer_n_fois(double, 1, 3));
+
+    let double_puis_plus_un = composer(double, ajouter_un);
+    for i in 1..=5 {
+        println!("f({}) = {}", i, double_puis_plus_un(i));
+    }
+}`,
+          expectedOutput: `double 3 fois depuis 1 : 8\nf(1) = 3\nf(2) = 5\nf(3) = 7\nf(4) = 9\nf(5) = 11`,
+          hint: 'Crée appliquer_n_fois avec F: Fn(i32)->i32, et composer qui combine deux Fn.',
+          xp: 40,
+          difficulty: 'advanced',
           type: 'lesson',
         },
       ],
