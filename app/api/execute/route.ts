@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PISTON_URL = 'https://emkc.org/api/v2/piston/execute';
+const WANDBOX_URL = 'https://wandbox.org/api/compile.json';
 
-const LANGUAGE_MAP: Record<string, { language: string; version: string }> = {
-  c:    { language: 'c',    version: '*' },
-  java: { language: 'java', version: '*' },
-  rust: { language: 'rust', version: '*' },
+const COMPILERS: Record<string, string> = {
+  c:          'gcc-head-c',
+  java:       'openjdk-jdk-22+36',
+  rust:       'rust-1.82.0',
+  typescript: 'typescript-5.6.2',
+  sql:        'sqlite-3.46.1',
 };
 
 export async function POST(req: NextRequest) {
   const { language, code } = await req.json();
 
-  const lang = LANGUAGE_MAP[language];
-  if (!lang) {
+  const compiler = COMPILERS[language];
+  if (!compiler) {
     return NextResponse.json({
       output: `L'exécution de ${language.toUpperCase()} n'est pas encore supportée.`,
       error: false,
@@ -20,25 +22,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const res = await fetch(PISTON_URL, {
+    const res = await fetch(WANDBOX_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language: lang.language,
-        version: lang.version,
-        files: [{ content: code }],
-      }),
+      body: JSON.stringify({ code, compiler }),
     });
 
     const data = await res.json();
-    const stdout = data.run?.stdout || '';
-    const stderr = data.run?.stderr || '';
-    const compileStderr = data.compile?.stderr || '';
 
-    if (compileStderr) return NextResponse.json({ output: compileStderr, error: true });
-    if (stderr)        return NextResponse.json({ output: stderr, error: true });
+    if (data.compiler_error) {
+      return NextResponse.json({ output: data.compiler_error, error: true });
+    }
 
-    return NextResponse.json({ output: stdout || '(aucune sortie)', error: false });
+    const output = data.program_output || data.program_message || '';
+    return NextResponse.json({ output: output || '(aucune sortie)', error: false });
   } catch (e: unknown) {
     return NextResponse.json({ output: `Erreur serveur : ${(e as Error).message}`, error: true });
   }

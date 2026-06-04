@@ -57,10 +57,10 @@ async function executeOnServer(language: string, code: string): Promise<ExecResu
 export async function executeCode(language: string, code: string): Promise<ExecResult> {
   switch (language) {
     case 'javascript':
-    case 'typescript':
       return executeJavaScript(code);
     case 'python':
       return executePython(code);
+    case 'typescript':
     case 'c':
     case 'java':
     case 'rust':
