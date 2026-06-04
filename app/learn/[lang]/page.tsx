@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -9,7 +9,7 @@ import { executeCode } from '@/lib/executor';
 import {
   ChevronLeft, ChevronRight, Play, RotateCcw, CheckCircle2,
   BookOpen, Code2, Lightbulb, Trophy, ChevronDown, ChevronUp,
-  Target, AlertCircle, FlaskConical, Pencil, MessageCircle, X, Send, Loader2
+  Target, AlertCircle, FlaskConical, Pencil
 } from 'lucide-react';
 
 const SUPPORTED_LANGS = ['python', 'javascript', 'typescript', 'java', 'c', 'rust', 'sql'];
@@ -89,8 +89,6 @@ const difficultyDot: Record<string, string> = {
   beginner: 'bg-green-400', intermediate: 'bg-yellow-400', advanced: 'bg-red-400',
 };
 
-type ChatMessage = { role: 'user' | 'assistant'; text: string };
-
 const CodeEditor = dynamic(() => import('@/components/editor/CodeEditor'), { ssr: false });
 
 function LearnPageInner({ params }: { params: { lang: string } }) {
@@ -115,13 +113,6 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
   const [showHint, setShowHint] = useState(false);
   const [showExpected, setShowExpected] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-
-  // AI chat
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [chatInput, setChatInput] = useState('');
-  const [chatLoading, setChatLoading] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const lesson = allLessons[currentIndex];
   const demo = lesson ? extractDemo(lesson.content) : null;
@@ -160,10 +151,6 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
     }
   }, [currentIndex, lesson?.id]);
 
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
-
   const runCode = async () => {
     if (!code.trim()) return;
     setRunning(true);
@@ -173,31 +160,6 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
     setOutput(result.output);
     setOutputError(result.error);
     setRunning(false);
-  };
-
-  const sendChat = async () => {
-    if (!chatInput.trim() || chatLoading || !lesson) return;
-    const msg = chatInput.trim();
-    setChatInput('');
-    setChatMessages(prev => [...prev, { role: 'user', text: msg }]);
-    setChatLoading(true);
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: msg,
-          language: params.lang,
-          lessonTitle: lesson.title,
-          lessonDescription: lesson.description,
-        }),
-      });
-      const data = await res.json();
-      setChatMessages(prev => [...prev, { role: 'assistant', text: data.response }]);
-    } catch {
-      setChatMessages(prev => [...prev, { role: 'assistant', text: 'Erreur de connexion à l\'IA.' }]);
-    }
-    setChatLoading(false);
   };
 
   const markComplete = async () => {
@@ -418,11 +380,6 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
             })()}
           </div>
 
-          {/* AI Chat button */}
-          <button onClick={() => setChatOpen(true)}
-            className="absolute bottom-4 right-4 w-11 h-11 bg-gradient-to-br from-green-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all z-20">
-            <MessageCircle size={20} className="text-black" />
-          </button>
         </div>
       </div>
 
@@ -444,72 +401,6 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
         </button>
       </div>
 
-      {/* AI Chat modal */}
-      {chatOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-end p-4 pointer-events-none">
-          <div className="w-full max-w-sm bg-[#111118] border border-white/10 rounded-2xl shadow-2xl flex flex-col pointer-events-auto" style={{ height: '420px' }}>
-            {/* Chat header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-cyan-500 rounded-full flex items-center justify-center">
-                  <MessageCircle size={14} className="text-black" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">Assistant CodePath</p>
-                  <p className="text-xs text-white/40">{lesson.title}</p>
-                </div>
-              </div>
-              <button onClick={() => setChatOpen(false)} className="text-white/30 hover:text-white transition-colors">
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-              {chatMessages.length === 0 && (
-                <div className="text-center py-6">
-                  <MessageCircle size={28} className="text-white/20 mx-auto mb-2" />
-                  <p className="text-white/40 text-xs">Pose une question sur la leçon ou ton code !</p>
-                </div>
-              )}
-              {chatMessages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
-                    msg.role === 'user'
-                      ? 'bg-green-500/20 text-white'
-                      : 'bg-white/5 text-white/80'
-                  }`}>
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-              {chatLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-white/5 rounded-xl px-3 py-2">
-                    <Loader2 size={14} className="text-white/40 animate-spin" />
-                  </div>
-                </div>
-              )}
-              <div ref={chatEndRef} />
-            </div>
-
-            {/* Input */}
-            <div className="px-3 py-3 border-t border-white/5 flex gap-2">
-              <input
-                value={chatInput}
-                onChange={e => setChatInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendChat()}
-                placeholder="Pose ta question..."
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-green-500/50"
-              />
-              <button onClick={sendChat} disabled={chatLoading || !chatInput.trim()}
-                className="w-9 h-9 bg-gradient-to-br from-green-500 to-cyan-500 rounded-xl flex items-center justify-center disabled:opacity-50 transition-all flex-shrink-0">
-                <Send size={14} className="text-black" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
