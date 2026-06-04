@@ -67,6 +67,7 @@ console.log(\`Nouvel âge: \${age}\`);
 // Destructuring
 const [premier, deuxième] = langages;
 console.log(\`Préféré: \${premier}, 2ème: \${deuxième}\`);`,
+          expectedOutput: `Nom: Valentin, Age: 20\nTypes: string, number\nNouvel âge: 21\nPréféré: Python, 2ème: JavaScript`,
           hint: 'Utilise const, let, template literals et destructuring.',
           xp: 10,
           difficulty: 'beginner',
@@ -120,6 +121,7 @@ console.log(unique([1,2,2,3,3,4])); // [1,2,3,4]
 // Fonction récursive
 const factorielle = n => n <= 1 ? 1 : n * factorielle(n - 1);
 console.log(\`10! = \${factorielle(10)}\`);`,
+          expectedOutput: `100\n[1, 2, 3, 4, 5]\n[1, 2, 3, 4]\n10! = 3628800`,
           hint: 'Implémente clamp, range, unique et factorielle avec arrow functions.',
           xp: 15,
           difficulty: 'beginner',
@@ -182,6 +184,7 @@ disponibles.forEach(p => console.log(\`  \${p.nom}: \${p.prix}€ (\${p.stock} e
 
 const total = disponibles.reduce((sum, p) => sum + p.prix * p.stock, 0);
 console.log(\`Valeur du stock disponible : \${total}€\`);`,
+          expectedOutput: `Produits disponibles :\n  Clavier: 79€ (12 en stock)\n  Écran: 349€ (5 en stock)\n  Laptop: 999€ (3 en stock)\nValeur du stock disponible : 5690€`,
           hint: 'Utilise filter, sort, forEach et reduce sur un tableau de produits.',
           xp: 20,
           difficulty: 'beginner',
@@ -321,6 +324,7 @@ compteur.incrémenter();
 compteur.décrémenter();
 console.log("---");
 compteur.réinitialiser();`,
+          expectedOutput: `Compteur : 1\nCompteur : 2\nCompteur : 3\nCompteur : 2\n---\nRéinitialisé`,
           hint: 'Crée un compteur avec fermeture (closure) exposant incrémenter, décrémenter, réinitialiser.',
           xp: 25,
           difficulty: 'intermediate',

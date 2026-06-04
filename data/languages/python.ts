@@ -51,6 +51,7 @@ print(f"Je m'appelle {nom} et j'ai {age} ans.")
 nom = "Valentin"
 age = 20
 print(f"Je m'appelle {nom} et j'ai {age} ans.")`,
+          expectedOutput: `Je m'appelle Valentin et j'ai 20 ans.`,
           hint: 'Utilise une f-string pour afficher ton prénom et ton âge.',
           xp: 10,
           difficulty: 'beginner',
@@ -94,6 +95,7 @@ est_etudiant = True
 print(type(age))
 print(type(taille))
 print(f"{nom} mesure {taille}m et a {age} ans.")`,
+          expectedOutput: `<class 'int'>\n<class 'float'>\nValentin mesure 1.75m et a 20 ans.`,
           hint: 'Déclare 4 variables de types différents et affiche leur type avec type().',
           xp: 10,
           difficulty: 'beginner',
@@ -137,6 +139,7 @@ print(f"{a} // {b} = {a // b}")
 print(f"{a} % {b} = {a % b}")
 print(f"{a} ** 2 = {a ** 2}")
 print(f"{a} > {b} ? {a > b}")`,
+          expectedOutput: `17 + 5 = 22\n17 // 5 = 3\n17 % 5 = 2\n17 ** 2 = 289\n17 > 5 ? True`,
           hint: 'Joue avec les opérateurs arithmétiques et de comparaison.',
           xp: 10,
           difficulty: 'beginner',
@@ -175,6 +178,7 @@ print(propre.title())
 print(f"Longueur : {len(propre)} chars")
 print(f"Mots : {len(propre.split())}")
 print(propre.replace("incroyable", "fantastique"))`,
+          expectedOutput: `Python Est Incroyable\nLongueur : 22 chars\nMots : 3\nPython est fantastique`,
           hint: 'Utilise .strip(), .title(), .replace() et .split() sur une chaîne.',
           xp: 15,
           difficulty: 'beginner',
@@ -234,6 +238,7 @@ else:
     mention = "Insuffisant"
 
 print(f"Note {note}/100 → {mention}")`,
+          expectedOutput: `Note 75/100 → Bien`,
           hint: 'Implémente un système de mentions selon la note (90+, 75+, 60+, 50+, sinon).',
           xp: 15,
           difficulty: 'beginner',
@@ -280,6 +285,7 @@ for i in range(1, 11):
 # Bonus : somme des 100 premiers entiers
 total = sum(range(1, 101))
 print(f"\\nSomme de 1 à 100 = {total}")`,
+          expectedOutput: `7 ×  1 =   7\n7 ×  2 =  14\n7 ×  3 =  21\n7 ×  4 =  28\n7 ×  5 =  35\n7 ×  6 =  42\n7 ×  7 =  49\n7 ×  8 =  56\n7 ×  9 =  63\n7 × 10 =  70\n\nSomme de 1 à 100 = 5050`,
           hint: 'Affiche la table de 7 avec un range(1, 11).',
           xp: 15,
           difficulty: 'beginner',
@@ -322,6 +328,7 @@ while b != 0:
     print(f"  {a} = {a//b} × {b} + {a%b}")
     a, b = b, a % b
 print(f"PGCD = {a}")`,
+          expectedOutput: `PGCD(48, 18) :\n  48 = 2 × 18 + 12\n  18 = 1 × 12 + 6\n  12 = 2 × 6 + 0\nPGCD = 6`,
           hint: 'Implémente l\'algorithme d\'Euclide pour trouver le PGCD de 48 et 18.',
           xp: 20,
           difficulty: 'beginner',
@@ -380,6 +387,7 @@ mini, maxi = min_max([3, 1, 4, 1, 5, 9])
 premiers = [n for n in range(2, 50) if est_premier(n)]
 print(f"Premiers < 50 : {premiers}")
 print(f"Nombre de premiers : {len(premiers)}")`,
+          expectedOutput: `Premiers < 50 : [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]\nNombre de premiers : 15`,
           hint: 'Crée une fonction est_premier(n) et liste tous les premiers < 50.',
           xp: 25,
           difficulty: 'intermediate',
@@ -431,6 +439,7 @@ for i, e in enumerate(classement, 1):
 # Reçus (note >= 70)
 reçus = list(filter(lambda e: e["note"] >= 70, etudiants))
 print(f"\\nReçus : {len(reçus)}/{len(etudiants)}")`,
+          expectedOutput: `1. Charlie    — 91/100\n2. Alice      — 85/100\n3. Bob        — 72/100\n4. Diana      — 68/100\n\nReçus : 3/4`,
           hint: 'Utilise sorted() avec une lambda et filter() pour travailler sur une liste de dicts.',
           xp: 25,
           difficulty: 'intermediate',
@@ -482,6 +491,7 @@ print(f"Top 3 : {notes[:3]}")
 # Garde les notes >= 10
 reussies = [n for n in notes if n >= 10]
 print(f"Réussies ({len(reussies)}/{len(notes)}) : {reussies}")`,
+          expectedOutput: `Notes : [15, 12, 18, 9, 14, 17, 11, 16]\nMoyenne : 14.00\nMax : 18, Min : 9\nTriées : [18, 17, 16, 15, 14, 12, 11, 9]\nTop 3 : [18, 17, 16]\nRéussies (7/8) : [18, 17, 16, 15, 14, 12, 11]`,
           hint: 'Calcule des statistiques sur une liste de notes avec sort(), sum(), max(), min().',
           xp: 20,
           difficulty: 'beginner',
@@ -528,6 +538,7 @@ for lettre in texte:
 for lettre, count in sorted(frequences.items(), key=lambda x: -x[1]):
     barre = "█" * count
     print(f"{lettre}: {barre} ({count})")`,
+          expectedOutput: `l: ███ (3)\no: ██ (2)\nh: █ (1)\ne: █ (1)\nw: █ (1)\nr: █ (1)\nd: █ (1)`,
           hint: 'Crée un compteur de fréquences de lettres avec un dictionnaire.',
           xp: 25,
           difficulty: 'intermediate',
@@ -597,6 +608,7 @@ compte.déposer(500)
 compte.retirer(200)
 compte.retirer(2000)
 print(f"Solde final : {compte.solde}€")`,
+          expectedOutput: `+ 500€ → Solde : 1500€\n- 200€ → Solde : 1300€\nFonds insuffisants !\nSolde final : 1300€`,
           hint: 'Implémente une classe CompteBancaire avec dépôt, retrait et propriété solde.',
           xp: 35,
           difficulty: 'intermediate',
@@ -664,6 +676,7 @@ def vérifier_age(age):
 tests = [(10, "+", 5), (10, "/", 0), (10, "%", 3), (4, "*", 7)]
 for a, op, b in tests:
     print(f"{a} {op} {b} = {calculatrice(a, op, b)}")`,
+          expectedOutput: `10 + 5 = 15\n10 / 0 = Erreur : Division par zéro\n10 % 3 = Erreur : Opérateur inconnu : %\n4 * 7 = 28`,
           hint: 'Crée une calculatrice avec gestion des exceptions ZeroDivisionError et ValueError.',
           xp: 30,
           difficulty: 'intermediate',
@@ -711,6 +724,7 @@ print(f"Longueur : {len(suite)} étapes")
 # Trouve le n < 100 avec la plus longue suite
 plus_long = max(range(1, 100), key=lambda n: len(list(suite_collatz(n))))
 print(f"Plus longue suite < 100 : n={plus_long} ({len(list(suite_collatz(plus_long)))} étapes)")`,
+          expectedOutput: `Collatz(27) : [27, 82, 41, 124, 62, 31, 94, 47, 142, 71]...\nLongueur : 112 étapes\nPlus longue suite < 100 : n=97 (119 étapes)`,
           hint: 'Implémente la suite de Collatz comme générateur et trouve la plus longue sous 100.',
           xp: 40,
           difficulty: 'advanced',
