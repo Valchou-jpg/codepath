@@ -66,9 +66,9 @@ function LearnPageInner({ params }: { params: { lang: string } }) {
 
   const runCode = async () => {
     setRunning(true);
-    setOutput('');
-    await new Promise(r => setTimeout(r, 200));
-    const result = executeCode(params.lang, code);
+    setOutput(params.lang === 'python' ? '⏳ Chargement de Python (première fois uniquement)...' : '');
+    setOutputError(false);
+    const result = await executeCode(params.lang, code);
     setOutput(result.output);
     setOutputError(result.error);
     setRunning(false);

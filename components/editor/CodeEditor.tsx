@@ -1,5 +1,5 @@
 'use client';
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import type * as Monaco from 'monaco-editor';
 
@@ -22,6 +22,25 @@ const LANG_MAP: Record<string, string> = {
 
 export default function CodeEditor({ language, value, onChange, height = '300px' }: Props) {
   const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(/Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent));
+  }, []);
+
+  if (isMobile) {
+    return (
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        spellCheck={false}
+        autoCapitalize="none"
+        autoCorrect="off"
+        style={{ height }}
+        className="w-full bg-[#0d1117] text-white/90 font-mono text-sm p-4 resize-none outline-none border-none leading-relaxed"
+      />
+    );
+  }
 
   return (
     <Editor
