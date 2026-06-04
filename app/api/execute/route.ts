@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 const PISTON_URL = 'https://emkc.org/api/v2/piston/execute';
 
 const LANGUAGE_MAP: Record<string, { language: string; version: string }> = {
-  c:    { language: 'c',    version: '10.2.0' },
-  java: { language: 'java', version: '15.0.2' },
-  rust: { language: 'rust', version: '1.50.0' },
+  c:    { language: 'c',    version: '*' },
+  java: { language: 'java', version: '*' },
+  rust: { language: 'rust', version: '*' },
 };
 
 export async function POST(req: NextRequest) {
